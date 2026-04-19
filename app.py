@@ -31,107 +31,116 @@ except Exception:
     Resampling = None
 
 st.set_page_config(
-    page_title="MicroFragment Atlas",
+    page_title="MicroFragment Atlas Pro",
     page_icon="🧪",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # ---------- style ----------
+
 def inject_css():
     st.markdown(
         """
         <style>
         .stApp {
             background:
-                radial-gradient(circle at 12% 18%, rgba(58,130,116,0.18), transparent 24%),
-                radial-gradient(circle at 88% 14%, rgba(82,125,178,0.16), transparent 26%),
-                radial-gradient(circle at 78% 72%, rgba(130,154,182,0.18), transparent 28%),
-                linear-gradient(180deg, #f7fafc 0%, #eef4f7 100%);
+                radial-gradient(circle at 10% 12%, rgba(28, 93, 142, 0.10), transparent 24%),
+                radial-gradient(circle at 88% 14%, rgba(11, 108, 104, 0.08), transparent 24%),
+                radial-gradient(circle at 80% 76%, rgba(74, 108, 152, 0.08), transparent 28%),
+                linear-gradient(180deg, #f4f8fb 0%, #edf3f7 46%, #f8fbfd 100%);
         }
         .block-container {
             padding-top: 1rem;
             padding-bottom: 2rem;
-            max-width: 1280px;
+            max-width: 1320px;
         }
         .hero {
             position: relative;
             overflow: hidden;
-            padding: 1.75rem 1.9rem;
+            padding: 1.7rem 1.9rem;
             border-radius: 28px;
-            background:
-              linear-gradient(135deg, rgba(29,78,216,0.08), rgba(13,148,136,0.14)),
-              rgba(255,255,255,0.72);
-            border: 1px solid rgba(15,23,42,0.08);
-            box-shadow: 0 20px 60px rgba(15,23,42,0.08);
-            backdrop-filter: blur(8px);
+            background: linear-gradient(135deg, rgba(19,39,63,0.96), rgba(27,78,104,0.92));
+            border: 1px solid rgba(255,255,255,0.08);
+            box-shadow: 0 24px 68px rgba(15,23,42,0.16);
             margin-bottom: 1rem;
         }
         .hero::after {
             content: "";
             position: absolute;
-            inset: auto -40px -40px auto;
-            width: 260px;
-            height: 260px;
-            opacity: .22;
-            background-image: radial-gradient(circle, rgba(14,165,233,.7) 0 8px, transparent 9px),
-                              radial-gradient(circle, rgba(16,185,129,.65) 0 7px, transparent 8px),
-                              radial-gradient(circle, rgba(99,102,241,.55) 0 5px, transparent 6px);
-            background-size: 88px 88px, 72px 72px, 60px 60px;
-            background-position: 0 0, 24px 16px, 42px 8px;
-            filter: blur(0.2px);
+            right: -40px;
+            bottom: -40px;
+            width: 240px;
+            height: 240px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 64%);
+            pointer-events: none;
         }
         .hero h1 {
             margin: 0 0 .35rem 0;
-            color: #102033;
-            font-size: 2.45rem;
+            color: #f8fbff;
+            font-size: 2.4rem;
             line-height: 1.02;
-            letter-spacing: -.02em;
+            letter-spacing: -.025em;
         }
         .hero p {
             margin: 0;
-            color: #475569;
+            color: rgba(248,251,255,0.86);
             font-size: 1rem;
+            line-height: 1.58;
+            max-width: 920px;
         }
         .kicker {
             display: inline-block;
-            padding: .35rem .7rem;
+            padding: .34rem .72rem;
             border-radius: 999px;
-            background: rgba(16,185,129,0.11);
-            color: #0f766e;
-            font-size: .82rem;
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.10);
+            color: #dbeeff;
+            font-size: .8rem;
             font-weight: 700;
-            letter-spacing: .05em;
+            letter-spacing: .06em;
             text-transform: uppercase;
-            margin-bottom: .7rem;
+            margin-bottom: .75rem;
         }
         .glass {
             border-radius: 22px;
             border: 1px solid rgba(15,23,42,.08);
-            background: rgba(255,255,255,0.82);
-            box-shadow: 0 14px 44px rgba(15,23,42,.05);
-            padding: 1rem 1.05rem .85rem 1.05rem;
+            background: rgba(255,255,255,.86);
+            box-shadow: 0 16px 42px rgba(15,23,42,.05);
+            padding: 1rem 1.05rem .9rem 1.05rem;
         }
         .tiny {
-            color: #64748b;
-            font-size: .92rem;
-        }
-        .stMetric {
-            background: rgba(255,255,255,0.85);
-            border: 1px solid rgba(15,23,42,.06);
-            padding: .7rem .9rem;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(15,23,42,.04);
+            color: #556476;
+            font-size: .93rem;
+            line-height: 1.56;
         }
         .section-title {
             margin-top: .2rem;
-            margin-bottom: .5rem;
-            color: #0f172a;
+            margin-bottom: .52rem;
+            color: #102033;
             font-weight: 800;
             letter-spacing: -.02em;
         }
-        div[data-testid="stDataFrame"] {
+        .soft-note {
+            border-radius: 16px;
+            border: 1px solid rgba(15,23,42,.08);
+            background: rgba(255,255,255,.78);
+            padding: .85rem 1rem;
+            color: #4f6073;
+            line-height: 1.55;
+            font-size: .93rem;
+            margin-bottom: .8rem;
+        }
+        .stMetric {
+            background: rgba(255,255,255,.9);
+            border: 1px solid rgba(15,23,42,.06);
+            padding: .7rem .9rem;
             border-radius: 18px;
+            box-shadow: 0 10px 26px rgba(15,23,42,.04);
+        }
+        div[data-testid="stDataFrame"] {
+            border-radius: 16px;
             overflow: hidden;
             border: 1px solid rgba(15,23,42,.08);
         }
@@ -140,14 +149,15 @@ def inject_css():
             font-weight: 700;
         }
         .sidebar-note {
-            color: #475569;
+            color: #546579;
             font-size: .92rem;
-            line-height: 1.55;
+            line-height: 1.56;
         }
         </style>
         """,
         unsafe_allow_html=True,
     )
+
 
 inject_css()
 
@@ -637,43 +647,45 @@ def export_bundle(model, feature_names, config, tables):
 
 # ---------- sidebar ----------
 with st.sidebar:
-    st.title("MicroFragment Atlas")
-    st.markdown('<div class="sidebar-note">A premium research app for environmental microplastic modelling. Upload a sampling table and optional TIFF predictor layers to fit, validate and project the model.</div>', unsafe_allow_html=True)
+    st.title("MicroFragment Atlas Pro")
+    st.markdown('<div class="sidebar-note">An elegant scientific workspace for microplastic fragmentation modelling, sample-level interpretation, and raster-based projection.</div>', unsafe_allow_html=True)
+    st.markdown('<div class="soft-note">Recommended workflow: upload the sample CSV, configure the response and coordinates, train the model, inspect sample-level SHAP, then run raster prediction and create a SHAP map for one selected predictor.</div>', unsafe_allow_html=True)
     csv_file = st.file_uploader("Upload sampling CSV", type=["csv"])
     raster_files = st.file_uploader("Upload predictor TIFF files", type=["tif", "tiff"], accept_multiple_files=True)
 
     st.markdown("---")
+    st.markdown("**Model controls**")
     random_state = st.number_input("Random state", 1, 9999, 42, 1)
     n_estimators = st.slider("Number of trees", 100, 1000, 300, 50)
     cv_splits = st.slider("CV splits", 3, 10, 5)
     cv_repeats = st.slider("CV repeats", 1, 5, 3)
     spatial_blocks = st.slider("Spatial blocks", 3, 10, 5)
     compute_perm = st.checkbox("Compute permutation importance", value=True)
-    enable_shap = st.checkbox("Enable SHAP", value=False, help="Disabled by default to reduce memory use during deployment.")
+    compute_shap = st.checkbox("Enable sample-level SHAP analysis", value=False, help="Disabled by default to reduce memory usage during deployment.")
 
 # ---------- hero ----------
 st.markdown(
     """
     <div class="hero">
-      <div class="kicker">Interactive research application</div>
-      <h1>Environmental microplastic fragmentation potential</h1>
-      <p>Upload sample data and predictor rasters, fit a spatially explicit random forest model, compare repeated and spatial cross-validation, optionally compute SHAP, and export regional GeoTIFF predictions.</p>
+      <div class="kicker">Scientific modelling workspace</div>
+      <h1>MicroFragment Atlas</h1>
+      <p>Train a robust random forest model from sampling data, compare repeated and spatial cross-validation, interpret drivers with sample-level SHAP, generate regional GeoTIFF prediction surfaces, and produce a single-variable SHAP raster after prediction.</p>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
 tab_overview, tab_data, tab_model, tab_validation, tab_interpret, tab_raster, tab_export = st.tabs(
-    ["Overview", "Data audit", "Model", "Validation", "Sample-level SHAP", "Raster prediction", "Export"]
+    ["Overview", "Data setup", "Model", "Validation", "Sample-level SHAP", "Raster prediction", "Export"]
 )
 
 if csv_file is None:
     with tab_overview:
         st.info("Upload a CSV from the sidebar to begin.")
         c1, c2, c3 = st.columns(3)
-        c1.markdown('<div class="glass"><h4 class="section-title">Premium interface</h4><p class="tiny">A cleaner visual system designed more like a project app than a default dashboard.</p></div>', unsafe_allow_html=True)
-        c2.markdown('<div class="glass"><h4 class="section-title">Full modelling flow</h4><p class="tiny">Includes predictor screening, tuning, repeated CV, spatial CV and SHAP interpretation.</p></div>', unsafe_allow_html=True)
-        c3.markdown('<div class="glass"><h4 class="section-title">Raster-ready</h4><p class="tiny">Accepts TIFF predictors and exports regional prediction and uncertainty GeoTIFFs.</p></div>', unsafe_allow_html=True)
+        c1.markdown('<div class="glass"><h4 class="section-title">Research-grade interface</h4><p class="tiny">A clean visual language designed for model building, interpretation, and publication-ready inspection.</p></div>', unsafe_allow_html=True)
+        c2.markdown('<div class="glass"><h4 class="section-title">Sample-to-region workflow</h4><p class="tiny">Move from sample-table modelling and validation to regional raster prediction in one controlled workflow.</p></div>', unsafe_allow_html=True)
+        c3.markdown('<div class="glass"><h4 class="section-title">Two-stage SHAP logic</h4><p class="tiny">First inspect SHAP at sample points, then optionally generate one spatial SHAP map after raster prediction.</p></div>', unsafe_allow_html=True)
     st.stop()
 
 df = load_csv(csv_file)
@@ -689,6 +701,7 @@ with tab_overview:
 
 with tab_data:
     st.subheader("Dataset configuration")
+    st.caption("Define the response variable, optional coordinate fields, and any columns to exclude from modelling.")
     all_cols = list(df.columns)
     col1, col2, col3 = st.columns(3)
     default_target = all_cols.index("MPs") if "MPs" in all_cols else 0
@@ -740,8 +753,8 @@ if run_model:
             else:
                 perm_imp = pd.DataFrame(columns=["feature", "perm_importance_mean", "perm_importance_std"])
 
-            if enable_shap:
-                shap_X, shap_df, shap_imp = compute_shap_sample(best_model, X_filt, sample_size=min(200, len(X_filt)), random_state=random_state)
+            if compute_shap:
+                shap_X, shap_df, shap_imp = compute_shap_sample(best_model, X_filt, sample_size=min(250, len(X_filt)), random_state=random_state)
             else:
                 shap_X = X_filt.head(0).copy()
                 shap_df = pd.DataFrame(columns=X_filt.columns)
@@ -810,6 +823,9 @@ with tab_interpret:
     if res is None:
         st.info("Run the modelling workflow first.")
     else:
+        st.subheader("Sample-level SHAP analysis")
+        st.caption("This section explains predictor effects at the sample-point level before any raster-based projection is generated.")
+
         c1, c2 = st.columns(2)
         c1.pyplot(fig_barh(res["rf_imp"], "rf_importance", "feature", "Random forest importance", 15, "Importance"))
         if res["perm_imp"].empty:
@@ -818,18 +834,18 @@ with tab_interpret:
             c2.pyplot(fig_barh(res["perm_imp"], "perm_importance_mean", "feature", "Permutation importance", 15, "Mean permutation importance"))
 
         if res["shap_imp"].empty:
-            st.info("SHAP outputs were not computed.")
+            st.info("Sample-level SHAP analysis is disabled. Enable it from the sidebar if you need point-level interpretation.")
         else:
-            st.pyplot(fig_barh(res["shap_imp"], "mean_abs_shap", "feature", "SHAP importance", 15, "Mean |SHAP|"))
+            st.pyplot(fig_barh(res["shap_imp"], "mean_abs_shap", "feature", "Sample-level SHAP importance", 15, "Mean |SHAP|"))
 
-            st.subheader("Sample-level Value–SHAP explorer")
-            feat = st.selectbox("Select a predictor", list(res["shap_X"].columns))
+            st.subheader("Value–SHAP explorer")
+            feat = st.selectbox("Select a predictor", list(res["shap_X"].columns), key="sample_shap_feature")
             fig, ax = plt.subplots(figsize=(6.8, 4.8))
             ax.scatter(res["shap_X"][feat], res["shap_df"][feat], s=18, alpha=0.58)
-        ax.set_xlabel(feat)
-        ax.set_ylabel("SHAP value")
-        ax.set_title(f"Value–SHAP relationship: {feat}")
-        st.pyplot(fig)
+            ax.set_xlabel(feat)
+            ax.set_ylabel("SHAP value")
+            ax.set_title(f"Sample-level Value–SHAP relationship: {feat}")
+            st.pyplot(fig)
 
         with st.expander("Show interpretation tables"):
             t1, t2 = st.columns(2)
@@ -837,17 +853,16 @@ with tab_interpret:
             t2.dataframe(res["shap_imp"], width="stretch", height=280)
 
 with tab_raster:
-    st.caption("Run raster prediction first. After prediction is completed, you can generate a SHAP raster for one selected predictor.")
     if res is None:
         st.info("Run the modelling workflow first.")
     else:
         st.subheader("Regional raster prediction")
-        st.caption("Upload one TIFF per retained predictor. TIFF file names should match predictor names, optionally with the suffix 1000, for example sand1000.tif.")
+        st.caption("Upload one TIFF per retained predictor. File names should match predictor names, optionally with the suffix 1000, for example sand1000.tif.")
         retained = list(res["X_filt"].columns)
         st.write("Retained predictors:", ", ".join(retained))
 
         if not raster_files:
-            st.warning("No TIFF files uploaded yet.")
+            st.warning("No TIFF files have been uploaded yet.")
         else:
             raster_names = [f.name for f in raster_files]
             st.write("Uploaded TIFF files:", ", ".join(raster_names))
@@ -903,8 +918,8 @@ with tab_raster:
             )
 
             st.markdown("---")
-            st.subheader("Single-variable SHAP spatial map (after raster prediction)")
-            st.caption("This step is available only after raster prediction. It generates a SHAP raster for one selected predictor to keep memory use controlled.")
+            st.subheader("Single-variable SHAP spatial map")
+            st.caption("After raster prediction, generate a SHAP raster for one selected predictor. This keeps the workflow interpretable while controlling memory use.")
             shap_feature = st.selectbox("Select one predictor for SHAP mapping", retained, key="shap_raster_feature")
             if st.button("Generate SHAP raster for selected predictor", width="stretch"):
                 with st.spinner("Computing SHAP raster for the selected predictor..."):
@@ -941,6 +956,7 @@ with tab_export:
         st.info("Run the modelling workflow first.")
     else:
         st.subheader("Export model bundle")
+        st.caption("Download the trained model, configuration, validation metrics, and interpretation tables as a compact archive.")
         config = {
             "target": res["target"],
             "x_coord": res["x_coord"],
