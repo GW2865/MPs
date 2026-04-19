@@ -39,11 +39,10 @@ st.set_page_config(
 
 # ---------- style ----------
 
-def 
-
 def bi(zh, en):
     return f"{zh} / {en}"
-inject_css():
+
+def inject_css():
     st.markdown(
         """
         <style>
@@ -983,7 +982,7 @@ with tab_export:
                     st.pyplot(fig, width="stretch")
                     st.dataframe(shap_single.head(30), width="stretch", height=260)
 
-st.download_button(
+        st.download_button(
             "Download model bundle (.zip)",
             data=bundle,
             file_name="microfragment_model_bundle.zip",
