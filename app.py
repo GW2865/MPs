@@ -31,128 +31,116 @@ except Exception:
     Resampling = None
 
 st.set_page_config(
-    page_title="MicroFragment Atlas Pro",
+    page_title="MicroFragment Atlas",
     page_icon="🧪",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 # ---------- style ----------
-
-def bi(zh, en):
-    return f"{zh} / {en}"
-
 def inject_css():
     st.markdown(
         """
         <style>
         .stApp {
             background:
-                radial-gradient(circle at 10% 10%, rgba(32, 84, 147, 0.10), transparent 24%),
-                radial-gradient(circle at 90% 12%, rgba(0, 119, 145, 0.10), transparent 22%),
-                radial-gradient(circle at 78% 78%, rgba(71, 111, 150, 0.08), transparent 28%),
-                linear-gradient(180deg, #f3f7fb 0%, #edf2f7 46%, #f8fbfd 100%);
-            color: #102033;
+                radial-gradient(circle at 12% 18%, rgba(58,130,116,0.18), transparent 24%),
+                radial-gradient(circle at 88% 14%, rgba(82,125,178,0.16), transparent 26%),
+                radial-gradient(circle at 78% 72%, rgba(130,154,182,0.18), transparent 28%),
+                linear-gradient(180deg, #f7fafc 0%, #eef4f7 100%);
         }
         .block-container {
-            max-width: 1320px;
             padding-top: 1rem;
             padding-bottom: 2rem;
+            max-width: 1280px;
         }
         .hero {
             position: relative;
             overflow: hidden;
+            padding: 1.75rem 1.9rem;
             border-radius: 28px;
-            padding: 1.6rem 1.8rem;
-            background: linear-gradient(135deg, rgba(18,52,86,0.92), rgba(31,92,125,0.88));
-            box-shadow: 0 24px 60px rgba(16, 32, 51, 0.16);
-            border: 1px solid rgba(255,255,255,0.08);
+            background:
+              linear-gradient(135deg, rgba(29,78,216,0.08), rgba(13,148,136,0.14)),
+              rgba(255,255,255,0.72);
+            border: 1px solid rgba(15,23,42,0.08);
+            box-shadow: 0 20px 60px rgba(15,23,42,0.08);
+            backdrop-filter: blur(8px);
             margin-bottom: 1rem;
         }
-        .hero:after {
+        .hero::after {
             content: "";
             position: absolute;
-            right: -30px;
-            bottom: -30px;
-            width: 240px;
-            height: 240px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,255,255,0.20), transparent 62%);
-            pointer-events: none;
+            inset: auto -40px -40px auto;
+            width: 260px;
+            height: 260px;
+            opacity: .22;
+            background-image: radial-gradient(circle, rgba(14,165,233,.7) 0 8px, transparent 9px),
+                              radial-gradient(circle, rgba(16,185,129,.65) 0 7px, transparent 8px),
+                              radial-gradient(circle, rgba(99,102,241,.55) 0 5px, transparent 6px);
+            background-size: 88px 88px, 72px 72px, 60px 60px;
+            background-position: 0 0, 24px 16px, 42px 8px;
+            filter: blur(0.2px);
         }
         .hero h1 {
             margin: 0 0 .35rem 0;
-            color: #f8fcff;
-            font-size: 2.35rem;
-            letter-spacing: -.03em;
-            font-weight: 800;
+            color: #102033;
+            font-size: 2.45rem;
+            line-height: 1.02;
+            letter-spacing: -.02em;
         }
         .hero p {
             margin: 0;
-            color: rgba(248,252,255,0.86);
+            color: #475569;
             font-size: 1rem;
-            line-height: 1.55;
-            max-width: 880px;
         }
         .kicker {
             display: inline-block;
-            margin-bottom: .7rem;
-            padding: .32rem .72rem;
+            padding: .35rem .7rem;
             border-radius: 999px;
-            background: rgba(255,255,255,0.10);
-            color: #d7eef8;
-            font-size: .78rem;
+            background: rgba(16,185,129,0.11);
+            color: #0f766e;
+            font-size: .82rem;
             font-weight: 700;
-            letter-spacing: .08em;
+            letter-spacing: .05em;
             text-transform: uppercase;
-            border: 1px solid rgba(255,255,255,0.10);
+            margin-bottom: .7rem;
         }
         .glass {
             border-radius: 22px;
-            border: 1px solid rgba(16,32,51,.08);
-            background: rgba(255,255,255,.84);
-            box-shadow: 0 14px 40px rgba(16,32,51,.06);
-            padding: 1rem 1.05rem .9rem 1.05rem;
+            border: 1px solid rgba(15,23,42,.08);
+            background: rgba(255,255,255,0.82);
+            box-shadow: 0 14px 44px rgba(15,23,42,.05);
+            padding: 1rem 1.05rem .85rem 1.05rem;
+        }
+        .tiny {
+            color: #64748b;
+            font-size: .92rem;
+        }
+        .stMetric {
+            background: rgba(255,255,255,0.85);
+            border: 1px solid rgba(15,23,42,.06);
+            padding: .7rem .9rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(15,23,42,.04);
         }
         .section-title {
-            margin-top: .15rem;
-            margin-bottom: .55rem;
-            color: #102033;
+            margin-top: .2rem;
+            margin-bottom: .5rem;
+            color: #0f172a;
             font-weight: 800;
             letter-spacing: -.02em;
         }
-        .tiny {
-            color: #52657b;
-            font-size: .92rem;
-        }
-        .soft-note {
-            padding: .85rem 1rem;
-            border-radius: 16px;
-            background: rgba(16,32,51,.04);
-            border: 1px solid rgba(16,32,51,.08);
-            color: #435467;
-            line-height: 1.6;
-            font-size: .95rem;
-        }
-        .stMetric {
-            background: rgba(255,255,255,.9);
-            border: 1px solid rgba(16,32,51,.06);
-            padding: .65rem .85rem;
-            border-radius: 18px;
-            box-shadow: 0 10px 26px rgba(16,32,51,.04);
-        }
         div[data-testid="stDataFrame"] {
-            border-radius: 16px;
+            border-radius: 18px;
             overflow: hidden;
-            border: 1px solid rgba(16,32,51,.08);
+            border: 1px solid rgba(15,23,42,.08);
         }
-        .stButton > button, .stDownloadButton > button {
+        .stButton>button, .stDownloadButton>button {
             border-radius: 14px;
             font-weight: 700;
-            border: 1px solid rgba(16,32,51,.10);
         }
         .sidebar-note {
-            color: #52657b;
+            color: #475569;
             font-size: .92rem;
             line-height: 1.55;
         }
@@ -161,36 +149,7 @@ def inject_css():
         unsafe_allow_html=True,
     )
 
-
 inject_css()
-
-st.markdown(
-    """
-    <div class="glass">
-        <div class="section-title">研究流程建议 / Recommended workflow</div>
-        <div class="tiny">
-            1. 上传采样 CSV。 2. 选择目标变量与坐标字段。 3. 运行建模。 4. 仅在需要解释时启用 SHAP。 5. 上传对齐后的 TIFF 并进行栅格预测。<br/>
-            1. Upload the sampling CSV. 2. Select the target and coordinate fields. 3. Run modelling. 4. Enable SHAP only when interpretability is needed. 5. Upload aligned TIFFs for raster prediction.
-        </div>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
-st.markdown(
-    f"""
-    <div class="hero">
-        <div class="kicker">科研建模平台 / Scientific Modelling Platform</div>
-        <h1>MicroFragment Atlas</h1>
-        <p>
-            用于微塑料破碎建模、随机森林解释分析与栅格空间预测的双语科研应用。<br/>
-            A bilingual scientific workspace for microplastic fragmentation modelling, interpretable random forest analysis, and raster-based spatial prediction.
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
-
 
 # ---------- helpers ----------
 def metric_dict(y_true, y_pred):
@@ -292,7 +251,7 @@ def compute_shap_sample(model, X_df, sample_size=200, random_state=42):
     sv = _shap_values_tree_explainer(explainer, X_use.values.astype("float32", copy=False))
     shap_df = pd.DataFrame(sv, columns=X_use.columns, index=X_use.index)
     imp = pd.DataFrame({
-        "变量 / feature": X_use.columns,
+        "feature": X_use.columns,
         "mean_abs_shap": np.abs(shap_df.values).mean(axis=0),
         "mean_shap": shap_df.values.mean(axis=0),
     }).sort_values("mean_abs_shap", ascending=False).reset_index(drop=True)
@@ -324,7 +283,7 @@ def collinearity_filter(X_df, threshold=0.85, method="spearman", always_keep=Non
     always_keep = set(always_keep or [])
     feats0 = list(X_df.columns)
     if len(feats0) <= 1:
-        return X_df.copy(), pd.DataFrame({"变量 / feature": feats0, "kept": True, "reason": "not_filtered"}), pd.DataFrame()
+        return X_df.copy(), pd.DataFrame({"feature": feats0, "kept": True, "reason": "not_filtered"}), pd.DataFrame()
 
     corr = X_df.corr(method=method).abs()
     remaining = list(feats0)
@@ -360,7 +319,7 @@ def collinearity_filter(X_df, threshold=0.85, method="spearman", always_keep=Non
         removed[drop] = f"removed_due_to_collinearity_with_{keep}"
         removed_pairs.append({"feature_a": a, "feature_b": b, "abs_corr": v, "dropped": drop, "kept": keep})
 
-    report_rows = [{"变量 / feature": f, "kept": f in remaining, "reason": "kept" if f in remaining else removed.get(f, "removed")} for f in feats0]
+    report_rows = [{"feature": f, "kept": f in remaining, "reason": "kept" if f in remaining else removed.get(f, "removed")} for f in feats0]
     return X_df[remaining].copy(), pd.DataFrame(report_rows), pd.DataFrame(removed_pairs)
 
 def get_param_distributions():
@@ -405,7 +364,7 @@ def evaluate_repeated_cv(model, X, y, random_state=42, cv_splits=5, cv_repeats=3
         first_time = np.isnan(oof[te_idx])
         oof[te_idx[first_time]] = pred[first_time]
         rows.append({"fold": fold_id, **metric_dict(y[te_idx], pred)})
-    return pd.DataFrame(rows), pd.DataFrame({"observed": y, "predicted_oof": oof, "残差 / residual": y - oof})
+    return pd.DataFrame(rows), pd.DataFrame({"observed": y, "predicted_oof": oof, "residual": y - oof})
 
 def evaluate_spatial_cv(model, X, y, coord_df, random_state=42, spatial_blocks=5):
     if coord_df is None or coord_df.empty:
@@ -424,14 +383,14 @@ def evaluate_spatial_cv(model, X, y, coord_df, random_state=42, spatial_blocks=5
         pred = m.predict(X[te_idx])
         oof[te_idx] = pred
         rows.append({"fold": fold_id, **metric_dict(y[te_idx], pred)})
-    return pd.DataFrame(rows), pd.DataFrame({"observed": y, "predicted_spatial_oof": oof, "残差 / residual": y - oof, "group": groups})
+    return pd.DataFrame(rows), pd.DataFrame({"observed": y, "predicted_spatial_oof": oof, "residual": y - oof, "group": groups})
 
 def compute_permutation_importance(model, X, y, feature_names, random_state=42):
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         pi = permutation_importance(model, X, y, n_repeats=15, random_state=random_state, n_jobs=1, scoring="r2")
     return pd.DataFrame({
-        "变量 / feature": feature_names,
+        "feature": feature_names,
         "perm_importance_mean": pi.importances_mean,
         "perm_importance_std": pi.importances_std,
     }).sort_values("perm_importance_mean", ascending=False).reset_index(drop=True)
@@ -441,40 +400,13 @@ def compute_shap_summary(model, X_df):
     sv = _shap_values_tree_explainer(explainer, X_df.values.astype("float32", copy=False))
     shap_df = pd.DataFrame(sv, columns=X_df.columns)
     imp = pd.DataFrame({
-        "变量 / feature": X_df.columns,
+        "feature": X_df.columns,
         "mean_abs_shap": np.abs(shap_df.values).mean(axis=0),
         "mean_shap": shap_df.values.mean(axis=0),
     }).sort_values("mean_abs_shap", ascending=False).reset_index(drop=True)
     return shap_df, imp
 
-def sample_for_shap(X_df, max_rows=200, random_state=42):
-    if len(X_df) <= max_rows:
-        return X_df.copy()
-    return X_df.sample(max_rows, random_state=random_state).copy()
-
-def compute_single_feature_shap(model, X_df, feature_name, max_rows=200, random_state=42):
-    Xs = sample_for_shap(X_df, max_rows=max_rows, random_state=random_state)
-    explainer = shap.TreeExplainer(model)
-    sv = _shap_values_tree_explainer(explainer, Xs.values.astype("float32", copy=False))
-    shap_df = pd.DataFrame(sv, columns=Xs.columns)
-    if feature_name not in shap_df.columns:
-        raise ValueError(f"Feature '{feature_name}' not found in SHAP results.")
-    return pd.DataFrame({
-        "feature_value": Xs[feature_name].values,
-        "shap_value": shap_df[feature_name].values,
-    }).sort_values("feature_value").reset_index(drop=True)
-
-def fig_single_feature_shap(df_plot, feature_name):
-    fig, ax = plt.subplots(figsize=(6.6, 4.5))
-    ax.scatter(df_plot["feature_value"], df_plot["shap_value"], s=24, alpha=0.68)
-    ax.axhline(0.0, linewidth=1.0, linestyle="--")
-    ax.set_xlabel(feature_name)
-    ax.set_ylabel("SHAP value")
-    ax.set_title(f"SHAP response for {feature_name}")
-    return fig
-
-
-def fig_observed_pred(df_oof, pred_col="predicted_oof", title="观测值与预测值 / Observed vs predicted"):
+def fig_observed_pred(df_oof, pred_col="predicted_oof", title="Observed vs predicted"):
     fig, ax = plt.subplots(figsize=(5.6, 5.1))
     good = np.isfinite(df_oof["observed"]) & np.isfinite(df_oof[pred_col])
     x = df_oof.loc[good, "observed"].values
@@ -483,12 +415,12 @@ def fig_observed_pred(df_oof, pred_col="predicted_oof", title="观测值与预�
     if len(x) > 0:
         mn, mx = min(x.min(), y.min()), max(x.max(), y.max())
         ax.plot([mn, mx], [mn, mx], linewidth=1.2)
-    ax.set_xlabel("观测值 / Observed")
-    ax.set_ylabel("预测值 / Predicted")
+    ax.set_xlabel("Observed")
+    ax.set_ylabel("Predicted")
     ax.set_title(title)
     return fig
 
-def fig_barh(df, value_col, label_col="变量 / feature", title="", top_n=15, xlabel=None):
+def fig_barh(df, value_col, label_col="feature", title="", top_n=15, xlabel=None):
     d = df.head(top_n).iloc[::-1]
     fig, ax = plt.subplots(figsize=(7.2, max(4, 0.35 * len(d))))
     ax.barh(d[label_col], d[value_col])
@@ -637,6 +569,42 @@ def run_raster_prediction(best_model, feature_names, raster_paths, X_train_df, y
     finally:
         stack.close()
 
+
+def run_single_feature_shap_raster(best_model, feature_names, raster_paths, selected_feature, block=512):
+    if selected_feature not in feature_names:
+        raise ValueError(f"Selected feature '{selected_feature}' is not in model predictors.")
+
+    tempdir = Path(tempfile.mkdtemp(prefix="microfragment_shap_outputs_"))
+    stack, datasets = open_and_align_datasets(feature_names, raster_paths)
+    try:
+        tmpl = datasets[next(iter(datasets.keys()))]
+        profile = _make_profile(tmpl, nodata=-9999.0)
+        shap_path = tempdir / f"shap_{selected_feature}.tif"
+        selected_idx = feature_names.index(selected_feature)
+        explainer = shap.TreeExplainer(best_model)
+
+        with rasterio.open(shap_path, "w", **profile) as dst_shap:
+            for row0 in range(0, tmpl.height, block):
+                for col0 in range(0, tmpl.width, block):
+                    h = min(block, tmpl.height - row0)
+                    w = min(block, tmpl.width - col0)
+                    win = Window(col0, row0, w, h)
+
+                    stack_x, invalid = read_predictor_block(datasets, feature_names, win)
+                    Xw = stack_x.reshape(-1, len(feature_names))
+                    valid = ~invalid.reshape(-1)
+
+                    out = np.full(h * w, -9999.0, dtype="float32")
+                    if np.any(valid):
+                        Xv = Xw[valid].astype("float32", copy=False)
+                        sv = _shap_values_tree_explainer(explainer, Xv)
+                        out[valid] = sv[:, selected_idx].astype("float32", copy=False)
+
+                    dst_shap.write(out.reshape(h, w), 1, window=win)
+        return tempdir, shap_path
+    finally:
+        stack.close()
+
 def preview_raster_png(raster_path):
     with rasterio.open(raster_path) as ds:
         arr = ds.read(1).astype("float32")
@@ -669,24 +637,19 @@ def export_bundle(model, feature_names, config, tables):
 
 # ---------- sidebar ----------
 with st.sidebar:
-
-    st.markdown(f'<div class="soft-note">{bi("SHAP 为可选功能，默认关闭，以降低部署时的内存压力；仅在需要解释分析时再启用。", "SHAP is optional and disabled by default to reduce memory pressure during deployment; enable it only when interpretability is needed.")}</div>', unsafe_allow_html=True)
-    enable_shap = st.checkbox("启用 SHAP 分析 / Enable SHAP analysis", value=False, help="默认关闭以节省在线部署内存 / Disabled by default to save memory in online deployment.")
-    shap_sample_size = st.slider("SHAP 抽样数量 / SHAP sample size", min_value=50, max_value=500, value=150, step=25, help="仅在启用 SHAP 时使用 / Only used when SHAP is enabled.")
     st.title("MicroFragment Atlas")
     st.markdown('<div class="sidebar-note">A premium research app for environmental microplastic modelling. Upload a sampling table and optional TIFF predictor layers to fit, validate and project the model.</div>', unsafe_allow_html=True)
-    csv_file = st.file_uploader("上传采样 CSV / Upload sampling CSV", type=["csv"])
+    csv_file = st.file_uploader("Upload sampling CSV", type=["csv"])
     raster_files = st.file_uploader("Upload predictor TIFF files", type=["tif", "tiff"], accept_multiple_files=True)
 
     st.markdown("---")
     random_state = st.number_input("Random state", 1, 9999, 42, 1)
     n_estimators = st.slider("Number of trees", 100, 1000, 300, 50)
-    cv_splits = st.slider("交叉验证折数 / CV splits", 3, 10, 5)
-    cv_repeats = st.slider("重复次数 / CV repeats", 1, 5, 3)
-    spatial_blocks = st.slider("空间分块数 / Spatial blocks", 3, 10, 5)
-    shap_sample_size = st.slider("SHAP 抽样数量 / SHAP sample size", 50, 500, 200, 25)
+    cv_splits = st.slider("CV splits", 3, 10, 5)
+    cv_repeats = st.slider("CV repeats", 1, 5, 3)
+    spatial_blocks = st.slider("Spatial blocks", 3, 10, 5)
     compute_perm = st.checkbox("Compute permutation importance", value=True)
-    compute_shap = st.checkbox("Compute SHAP outputs", value=True)
+    enable_shap = st.checkbox("Enable SHAP", value=False, help="Disabled by default to reduce memory use during deployment.")
 
 # ---------- hero ----------
 st.markdown(
@@ -694,14 +657,14 @@ st.markdown(
     <div class="hero">
       <div class="kicker">Interactive research application</div>
       <h1>Environmental microplastic fragmentation potential</h1>
-      <p>Upload sample data and predictor rasters, optimize a spatially explicit random forest model, compare repeated and spatial cross-validation, interpret drivers with SHAP, and export regional GeoTIFF predictions.</p>
+      <p>Upload sample data and predictor rasters, fit a spatially explicit random forest model, compare repeated and spatial cross-validation, optionally compute SHAP, and export regional GeoTIFF predictions.</p>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
 tab_overview, tab_data, tab_model, tab_validation, tab_interpret, tab_raster, tab_export = st.tabs(
-    ["Overview", "Data audit", "Model", "Validation", "Interpretation", "栅格预测 / Raster prediction", "Export"]
+    ["Overview", "Data audit", "Model", "Validation", "Sample-level SHAP", "Raster prediction", "Export"]
 )
 
 if csv_file is None:
@@ -729,9 +692,9 @@ with tab_data:
     all_cols = list(df.columns)
     col1, col2, col3 = st.columns(3)
     default_target = all_cols.index("MPs") if "MPs" in all_cols else 0
-    target = col1.selectbox("响应变量 / Response variable", all_cols, index=default_target)
-    x_default = ([""] + all_cols).index("经度 / Longitude") if "经度 / Longitude" in all_cols else 0
-    y_default = ([""] + all_cols).index("纬度 / Latitude") if "纬度 / Latitude" in all_cols else 0
+    target = col1.selectbox("Response variable", all_cols, index=default_target)
+    x_default = ([""] + all_cols).index("Longitude") if "Longitude" in all_cols else 0
+    y_default = ([""] + all_cols).index("Latitude") if "Latitude" in all_cols else 0
     x_coord = col2.selectbox("X coordinate (optional)", [""] + all_cols, index=x_default)
     y_coord = col3.selectbox("Y coordinate (optional)", [""] + all_cols, index=y_default)
 
@@ -743,7 +706,7 @@ with tab_data:
         mc1, mc2, mc3 = st.columns(3)
         mc1.metric("Rows used for modelling", len(X_filt))
         mc2.metric("Predictor count", X_filt.shape[1])
-        mc3.metric("目标变量 / Target", target)
+        mc3.metric("Target", target)
         st.markdown("**Predictors used**")
         st.write(", ".join(list(X_filt.columns)))
     except Exception as e:
@@ -768,21 +731,21 @@ if run_model:
             spatial_folds, spatial_oof = evaluate_spatial_cv(best_model, X, y, coord_df, random_state=random_state, spatial_blocks=spatial_blocks)
 
             rf_imp = pd.DataFrame({
-                "变量 / feature": X_filt.columns,
+                "feature": X_filt.columns,
                 "rf_importance": best_model.feature_importances_,
             }).sort_values("rf_importance", ascending=False).reset_index(drop=True)
 
             if compute_perm:
                 perm_imp = compute_permutation_importance(best_model, X, y, list(X_filt.columns), random_state=random_state)
             else:
-                perm_imp = pd.DataFrame(columns=["变量 / feature", "perm_importance_mean", "perm_importance_std"])
+                perm_imp = pd.DataFrame(columns=["feature", "perm_importance_mean", "perm_importance_std"])
 
-            if compute_shap:
-                shap_X, shap_df, shap_imp = compute_shap_sample(best_model, X_filt, sample_size=shap_sample_size, random_state=random_state)
+            if enable_shap:
+                shap_X, shap_df, shap_imp = compute_shap_sample(best_model, X_filt, sample_size=min(200, len(X_filt)), random_state=random_state)
             else:
                 shap_X = X_filt.head(0).copy()
                 shap_df = pd.DataFrame(columns=X_filt.columns)
-                shap_imp = pd.DataFrame(columns=["变量 / feature", "mean_abs_shap", "mean_shap"])
+                shap_imp = pd.DataFrame(columns=["feature", "mean_abs_shap", "mean_shap"])
 
         st.session_state["results"] = {
             "target": target,
@@ -804,9 +767,10 @@ if run_model:
             "shap_X": shap_X,
             "shap_df": shap_df,
             "shap_imp": shap_imp,
-            "col_report": pd.DataFrame({"变量 / feature": list(X_filt.columns), "kept": True, "reason": "used_in_model"}),
+            "col_report": pd.DataFrame({"feature": list(X_filt.columns), "kept": True, "reason": "used_in_model"}),
             "col_pairs": pd.DataFrame(),
             "raster_outputs": None,
+            "shap_raster_outputs": None,
         }
 
 res = st.session_state["results"]
@@ -847,18 +811,18 @@ with tab_interpret:
         st.info("Run the modelling workflow first.")
     else:
         c1, c2 = st.columns(2)
-        c1.pyplot(fig_barh(res["rf_imp"], "rf_importance", "变量 / feature", "Random forest importance", 15, "Importance"))
+        c1.pyplot(fig_barh(res["rf_imp"], "rf_importance", "feature", "Random forest importance", 15, "Importance"))
         if res["perm_imp"].empty:
             c2.info("Permutation importance was not computed.")
         else:
-            c2.pyplot(fig_barh(res["perm_imp"], "perm_importance_mean", "变量 / feature", "置换重要性 / Permutation importance", 15, "Mean permutation importance"))
+            c2.pyplot(fig_barh(res["perm_imp"], "perm_importance_mean", "feature", "Permutation importance", 15, "Mean permutation importance"))
 
         if res["shap_imp"].empty:
             st.info("SHAP outputs were not computed.")
         else:
-            st.pyplot(fig_barh(res["shap_imp"], "mean_abs_shap", "变量 / feature", "SHAP 重要性 / SHAP importance", 15, "Mean |SHAP|"))
+            st.pyplot(fig_barh(res["shap_imp"], "mean_abs_shap", "feature", "SHAP importance", 15, "Mean |SHAP|"))
 
-            st.subheader("Value–SHAP explorer")
+            st.subheader("Sample-level Value–SHAP explorer")
             feat = st.selectbox("Select a predictor", list(res["shap_X"].columns))
             fig, ax = plt.subplots(figsize=(6.8, 4.8))
             ax.scatter(res["shap_X"][feat], res["shap_df"][feat], s=18, alpha=0.58)
@@ -870,10 +834,10 @@ with tab_interpret:
         with st.expander("Show interpretation tables"):
             t1, t2 = st.columns(2)
             t1.dataframe(res["perm_imp"], width="stretch", height=280)
-            if res.get("shap_imp") is not None:
-                t2.dataframe(res["shap_imp"], width="stretch", height=280)
+            t2.dataframe(res["shap_imp"], width="stretch", height=280)
 
 with tab_raster:
+    st.caption("Run raster prediction first. After prediction is completed, you can generate a SHAP raster for one selected predictor.")
     if res is None:
         st.info("Run the modelling workflow first.")
     else:
@@ -888,7 +852,7 @@ with tab_raster:
             raster_names = [f.name for f in raster_files]
             st.write("Uploaded TIFF files:", ", ".join(raster_names))
 
-            if st.button("运行栅格预测并导出不确定性 / Run raster prediction and uncertainty export", width="stretch"):
+            if st.button("Run raster prediction and uncertainty export", width="stretch"):
                 with st.spinner("Matching TIFF predictors, aligning rasters and generating outputs..."):
                     raster_tempdir, saved_rasters = save_uploaded_rasters_to_temp(raster_files)
                     try:
@@ -938,6 +902,40 @@ with tab_raster:
                 mime="application/octet-stream",
             )
 
+            st.markdown("---")
+            st.subheader("Single-variable SHAP spatial map (after raster prediction)")
+            st.caption("This step is available only after raster prediction. It generates a SHAP raster for one selected predictor to keep memory use controlled.")
+            shap_feature = st.selectbox("Select one predictor for SHAP mapping", retained, key="shap_raster_feature")
+            if st.button("Generate SHAP raster for selected predictor", width="stretch"):
+                with st.spinner("Computing SHAP raster for the selected predictor..."):
+                    raster_tempdir, saved_rasters = save_uploaded_rasters_to_temp(raster_files)
+                    try:
+                        shap_dir, shap_path = run_single_feature_shap_raster(
+                            res["best_model"],
+                            retained,
+                            saved_rasters,
+                            shap_feature,
+                        )
+                        res["shap_raster_outputs"] = {
+                            "temp_rasters": str(raster_tempdir),
+                            "out_dir": str(shap_dir),
+                            "feature": shap_feature,
+                            "path": str(shap_path),
+                        }
+                        st.success(f"SHAP raster completed for: {shap_feature}")
+                    except Exception as e:
+                        st.error(f"SHAP raster generation failed: {e}")
+
+        if res.get("shap_raster_outputs"):
+            shap_outputs = res["shap_raster_outputs"]
+            st.pyplot(preview_raster_png(shap_outputs["path"]))
+            st.download_button(
+                f"Download SHAP raster: {shap_outputs['feature']}",
+                data=Path(shap_outputs["path"]).read_bytes(),
+                file_name=f"shap_{shap_outputs['feature']}.tif",
+                mime="application/octet-stream",
+            )
+
 with tab_export:
     if res is None:
         st.info("Run the modelling workflow first.")
@@ -970,18 +968,6 @@ with tab_export:
                 "shap_importance": res["shap_imp"],
             },
         )
-        
-        if "best_model" in locals() and "X_filt" in locals() and enable_shap:
-            st.markdown("### SHAP feature explorer")
-            st.caption("按需解释视图，仅处理所选变量以降低内存占用 / Optional interpretability view. Only selected variable is processed to keep memory usage low.")
-            shap_feature = st.selectbox("选择一个变量进行 SHAP 解析 / Choose one variable for SHAP inspection", options=list(X_filt.columns), index=0)
-            if st.button("生成所选变量的 SHAP 图 / Generate selected-variable SHAP", width="stretch"):
-                with st.spinner("正在计算所选变量的 SHAP… / Computing SHAP for selected variable..."):
-                    shap_single = compute_single_feature_shap(best_model, X_filt, shap_feature, max_rows=shap_sample_size, random_state=random_state)
-                    fig = fig_single_feature_shap(shap_single, shap_feature)
-                    st.pyplot(fig, width="stretch")
-                    st.dataframe(shap_single.head(30), width="stretch", height=260)
-
         st.download_button(
             "Download model bundle (.zip)",
             data=bundle,
