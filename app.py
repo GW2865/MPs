@@ -437,7 +437,46 @@ def fig_barh(df, value_col, label_col="feature", title="", top_n=15, xlabel=None
     ax.set_title(title)
     ax.set_xlabel(xlabel or value_col)
     ax.set_ylabel("")
+    return fi
+
+def fig_value_shap_driver(x, y, feature_name, bins=60):
+    fig, ax = plt.subplots(figsize=(7.0, 4.8))
+    good = np.isfinite(x) & np.isfinite(y)
+    x = np.asarray(x)[good]
+    y = np.asarray(y)[good]
+    ax.scatter(x, y, s=18, alpha=0.35, label="Samples")
+
+    if len(x) >= 8:
+        order = np.argsort(x)
+        xs = x[order]
+        ys = y[order]
+        n = len(xs)
+        window = max(5, min(max(7, n // 12), 51))
+        if window % 2 == 0:
+            window += 1
+        smooth = pd.Series(ys).rolling(window=window, center=True, min_periods=max(3, window // 3)).mean().to_numpy()
+        valid = np.isfinite(smooth)
+        if valid.any():
+            ax.plot(xs[valid], smooth[valid], linewidth=2.2, label="Smoothed driver")
+
+    ax.axhline(0.0, linestyle="--", linewidth=1.0)
+    ax.set_xlabel(feature_name)
+    ax.set_ylabel("SHAP value")
+    ax.set_title(f"Driver process: {feature_name}")
+    ax.legend(frameon=False)
     return fig
+
+def fig_feature_distribution(x, feature_name):
+    fig, ax = plt.subplots(figsize=(7.0, 3.8))
+    x = np.asarray(x)
+    x = x[np.isfinite(x)]
+    if len(x) > 0:
+        ax.hist(x, bins=min(40, max(10, len(x) // 8)))
+    ax.set_xlabel(feature_name)
+    ax.set_ylabel("Count")
+    ax.set_title(f"Observed distribution: {feature_name}")
+    return fig
+g
 
 # ---------- raster helpers ----------
 def save_uploaded_rasters_to_temp(uploaded_rasters):
@@ -824,33 +863,57 @@ with tab_interpret:
         st.info("Run the modelling workflow first.")
     else:
         st.subheader("Sample-level SHAP analysis")
-        st.caption("This section explains predictor effects at the sample-point level before any raster-based projection is generated.")
+        st.caption("This section focuses on driver mechanisms at the sample-point level before any raster-based projection is generated.")
 
-        c1, c2 = st.columns(2)
-        c1.pyplot(fig_barh(res["rf_imp"], "rf_importance", "feature", "Random forest importance", 15, "Importance"))
+        c1, c2, c3 = st.columns(3)
+        c1.pyplot(fig_barh(res["rf_imp"], "rf_importance", "feature", "Random forest importance", 12, "Importance"))
         if res["perm_imp"].empty:
             c2.info("Permutation importance was not computed.")
         else:
-            c2.pyplot(fig_barh(res["perm_imp"], "perm_importance_mean", "feature", "Permutation importance", 15, "Mean permutation importance"))
+            c2.pyplot(fig_barh(res["perm_imp"], "perm_importance_mean", "feature", "Permutation importance", 12, "Mean permutation importance"))
+        if res["shap_imp"].empty:
+            c3.info("Sample-level SHAP is disabled.")
+        else:
+            c3.pyplot(fig_barh(res["shap_imp"], "mean_abs_shap", "feature", "Global SHAP importance", 12, "Mean |SHAP|"))
 
         if res["shap_imp"].empty:
-            st.info("Sample-level SHAP analysis is disabled. Enable it from the sidebar if you need point-level interpretation.")
+            st.info("Enable sample-level SHAP analysis from the sidebar to inspect variable-level driving processes.")
         else:
-            st.pyplot(fig_barh(res["shap_imp"], "mean_abs_shap", "feature", "Sample-level SHAP importance", 15, "Mean |SHAP|"))
+            st.markdown("### Variable driving process")
+            driver_feature = st.selectbox(
+                "Select one predictor to inspect the sample-level driving process",
+                list(res["shap_X"].columns),
+                key="sample_shap_feature",
+            )
 
-            st.subheader("Value–SHAP explorer")
-            feat = st.selectbox("Select a predictor", list(res["shap_X"].columns), key="sample_shap_feature")
-            fig, ax = plt.subplots(figsize=(6.8, 4.8))
-            ax.scatter(res["shap_X"][feat], res["shap_df"][feat], s=18, alpha=0.58)
-            ax.set_xlabel(feat)
-            ax.set_ylabel("SHAP value")
-            ax.set_title(f"Sample-level Value–SHAP relationship: {feat}")
-            st.pyplot(fig)
+            left, right = st.columns([1.4, 1.0])
+            with left:
+                st.pyplot(
+                    fig_value_shap_driver(
+                        res["shap_X"][driver_feature].values,
+                        res["shap_df"][driver_feature].values,
+                        driver_feature,
+                    )
+                )
+            with right:
+                st.pyplot(
+                    fig_feature_distribution(
+                        res["shap_X"][driver_feature].values,
+                        driver_feature,
+                    )
+                )
 
-        with st.expander("Show interpretation tables"):
-            t1, t2 = st.columns(2)
-            t1.dataframe(res["perm_imp"], width="stretch", height=280)
-            t2.dataframe(res["shap_imp"], width="stretch", height=280)
+            st.markdown("### Value–SHAP data view")
+            driver_df = pd.DataFrame({
+                "feature_value": res["shap_X"][driver_feature].values,
+                "shap_value": res["shap_df"][driver_feature].values,
+            }).sort_values("feature_value").reset_index(drop=True)
+            st.dataframe(driver_df, width="stretch", height=260)
+
+            with st.expander("Show interpretation tables"):
+                t1, t2 = st.columns(2)
+                t1.dataframe(res["perm_imp"], width="stretch", height=280)
+                t2.dataframe(res["shap_imp"], width="stretch", height=280)
 
 with tab_raster:
     if res is None:
